@@ -79,8 +79,6 @@ class DashboardController extends Controller
             ->setLabels(['Pending', 'In Progress', 'Completed'])
             ->setColors(['#F59E0B', '#6366F1', '#10B981']);
             return view('dashboard.clientDashboard', compact('data','task','chartTask'));
-        }
-        
-    
+        } 
     }
 }

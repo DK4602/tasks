@@ -26,9 +26,6 @@ class TaskController extends Controller
     public function index()
     {
         $id = Auth::user()->id;
-
-        
-
         $Efilter = function ($query) {
             $query->whereHas('employees', function ($q) {
                 $q->where('id', Auth::id());
@@ -47,7 +44,7 @@ class TaskController extends Controller
         try{
             $this->taskRepositories->store($request->validated());
             DB::commit();
-            return redirect()->back();
+            return redirect()->back()->with('success', 'Tasks created successfully!');
         }
         catch(\Exception $e){
             DB::rollBack();
@@ -63,7 +60,7 @@ class TaskController extends Controller
         try{
             $this->taskRepositories->update($request->validated(),$task->id);
             DB::commit();
-            return redirect()->back();
+            return redirect()->back()->with('success', 'Tasks updated successfully!');
         }
         catch(\Exception $e){
             DB::rollBack();
@@ -81,7 +78,7 @@ class TaskController extends Controller
         try{
             $this->taskRepositories->destroy($task->id);
             DB::commit();
-            return redirect()->back();
+            return redirect()->back()->with('success', 'Tasks Deleted successfully!');
         }
         catch(\Exception $e){
             DB::rollBack();

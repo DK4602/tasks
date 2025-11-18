@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Project;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
@@ -53,12 +51,8 @@ class ProjectController extends Controller
     public function store(StoreProjectRequest $request)
 {
     DB::beginTransaction();
-
     try {
-        // Get validated data once
         $validated = $request->validated();
-
-        // Prepare only the columns that belong to the 'projects' table
         $data = [
             'project_name'        => $validated['project_name'],
             'project_description' => $validated['project_description'] ?? null,
@@ -67,10 +61,7 @@ class ProjectController extends Controller
             'client_id'           => $validated['client_id'],
         ];
 
-        // Employee IDs come from pivot (many-to-many)
         $employeeIds = $validated['employee_ids'];
-
-        // Store project + attach employees
         $this->projectRepositories->store($data, $employeeIds);
 
         DB::commit();
@@ -102,7 +93,6 @@ class ProjectController extends Controller
         } else {
             $data = $this->projectRepositories->show($project->id,['employees']);
             $employeeName = $this->taskRepositories->index(['user'],['project_id'=>$project->id]);
-            // dd($employeeName);
             return view('project.GetProject', compact('data','employeeName'));
         }
     }
@@ -132,7 +122,7 @@ class ProjectController extends Controller
             ];
             $this->projectRepositories->update($data, $project->id, $validated['employee_ids']);
             DB::commit();
-            return redirect()->route('projects.edit',$project->id);
+            return redirect()->route('projects.edit',$project->id)->with('success', 'Project updated successfully!');;
         }
         catch(\Exception $e){
             DB::rollBack();
@@ -147,12 +137,11 @@ class ProjectController extends Controller
         try{
             $this->projectRepositories->destroy($project->id);
             DB::commit();
-            return redirect()->route('projects.index');    
+            return redirect()->route('projects.index')->with('success', 'Project deleted successfully!');;    
         }
         catch(\Exception $e){
             DB::rollBack();
             return redirect()->route('projects.index');
-        }
-        
+        }      
     }
 }

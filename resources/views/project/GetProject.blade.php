@@ -71,7 +71,7 @@
 
         {{-- Task List --}}
         @forelse ($data->tasks as $task)
-        {{-- @dd($employeeName) --}}
+    
         <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-6 hover:border-blue-400 transition-all shadow-sm">
             <div class="flex justify-between items-center mb-3">
                 <h3 class="text-xl font-semibold">{{ $task->task_name }}</h3>
