@@ -73,15 +73,18 @@ abstract class BaseRepositories implements RepositoryInterface
         }
     }
 
-    public function show($id, $relation = [],$where = [])
+    public function show($id, $relation = [],$where = [],$filter = [])
     {
-         $query = $this->model->newQuery();
+        $query = $this->model->newQuery();
         if(!empty($relation)) {
             return $query->with($relation)->find($id);
         }
 
         if(!empty($where)) {
             return $query->where($where)->find($id);
+        }
+         if (is_callable($filter)) {
+            $query = $filter($query);
         }
 
         return $this->model->find($id);

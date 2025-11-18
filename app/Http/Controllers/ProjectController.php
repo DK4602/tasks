@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Repositories\TaskRepositories;
 use App\Repositories\ClientRepositories;
 use App\Repositories\ProjectRepositories;
 use App\Http\Requests\StoreProjectRequest;
 use App\Repositories\EmployeeRepositories;
 use App\Http\Requests\UpdateProjectRequest;
-use App\Repositories\TaskRepositories;
+use Illuminate\Validation\Rules\Can;
 
 class ProjectController extends Controller
 {
@@ -90,15 +92,32 @@ class ProjectController extends Controller
         if (Gate::denies('view-project', $project)) {
             return view('error.403page');
         } else {
-            $data = $this->projectRepositories->show($project->id, ['employees']);
-            $employeeName = $this->taskRepositories->index(['user'], ['project_id' => $project->id]);
-            return view('project.GetProject', compact('data', 'employeeName'));
+            if (Auth::user()->role === 'employee') {
+                $employeeFilter = function ($query) {
+                    return $query->whereHas('employees', function ($q) {
+                        $q->where('users.id', Auth::id());
+                    });
+                };
+
+                $data = $this->projectRepositories->show($project->id, ['employees', 'tasks'], [], [$employeeFilter]);
+                $tasks = $this->taskRepositories->index(['user'], ['project_id' => $project->id, 'employee_id' => Auth::user()->id]);
+                // return view('project.GetProject', compact('data', 'tasks'));
+            }
+            if(Auth::user()->role === 'admin') {
+                $data = $this->projectRepositories->show($project->id, ['employees', 'tasks']);
+                $tasks = $this->taskRepositories->index(['user'], ['project_id' => $project->id]);
+            }
+            
+            return view('project.GetProject', compact('data', 'tasks'));
         }
     }
 
 
     public function edit($id)
     {
+        if (Gate::denies('is-admin')) {
+            return view('error.403page');
+        }
         $project = $this->projectRepositories->show($id, ['employees']);
         $client = $this->clientRepositories->index([], ['role' => 'client']);
         $employees = $this->employeeRepositories->index([], ['role' => 'employee']);

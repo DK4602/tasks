@@ -36,4 +36,5 @@ class ProjectRepositories extends BaseRepositories
         // Admin sees all
         return $query->get();
     }
+
 }

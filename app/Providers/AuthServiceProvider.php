@@ -21,20 +21,21 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         //
-         Gate::define('is-admin', function ($user) {
+        Gate::define('is-admin', function ($user) {
             return $user->role === 'admin';
         });
-         Gate::define('is-employee', function ($user) {
+        Gate::define('is-employee', function ($user) {
             return $user->role === 'employee';
         });
-         Gate::define('is-client', function ($user) {
+        Gate::define('is-client', function ($user) {
             return $user->role === 'client';
         });
 
         Gate::define('view-project', function ($user, $project) {
-        return $user->role === 'admin'
-            || $user->id === $project->employee_id
-            || $user->id === $project->client_id;
-    });
+            return $user->role === 'admin'
+                || $project->employees->contains('id', $user->id)
+                || $user->id === $project->client_id;
+        });
+        
     }
 }

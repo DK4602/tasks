@@ -1,3 +1,4 @@
+{{-- @dd($task) --}}
 <x-app-layout>
 <div class="max-w-6xl mx-auto my-16 bg-white text-gray-800 rounded-2xl shadow-xl p-10 border border-gray-200 font-sans">
     <a href = "{{Route('projects.index')}}">
@@ -66,9 +67,9 @@
             </div>
             @endcanany
         </div>
-
+        
         {{-- Task List --}}
-        @forelse ($data->tasks as $task)
+        @forelse ($tasks as $task)
     
         <div class="bg-gray-50 p-6 rounded-xl border border-gray-200 mb-6 hover:border-blue-400 transition-all shadow-sm">
             <div class="flex justify-between items-center mb-3">
@@ -78,13 +79,9 @@
             </div>
 
             <p class="text-gray-600 mb-4 text-sm">{{ $task->task_description }}</p>
-            @foreach ($employeeName as $name)
-
-                @if($name->id == $task->id)
-                    <p class="text-gray-600 mb-4 text-sm font-medium">Assigned To: {{ Str::ucfirst($name->user?->name) }}</p>
-                @endif
                 
-            @endforeach
+                    <p class="text-gray-600 mb-4 text-sm font-medium">Assigned To: {{ Str::ucfirst($task->user?->name) }}</p>
+                
             <div class="flex justify-between items-center">
                 {{-- Status --}}
                 <div>
@@ -99,7 +96,7 @@
                 
                 <div class="grid md:grid-cols-2 gap-5">
                 {{-- Edit Button --}}
-                    @can('is-admin')
+                    
                     <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this task?')">
                         @csrf
                         @method('DELETE')
@@ -109,13 +106,12 @@
                             Delete Task
                         </button>
                     </form>
-                    @endcan
-                    @canany(['is-admin','is-employee'])
+                   
                     <button command="show-modal" commandfor="dialog({{$task->id}})"
                         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md transition-all hover:scale-105">
                         Edit Task
                     </button>
-                    @endcanany
+                  
                 </div>
                 
             </div>
