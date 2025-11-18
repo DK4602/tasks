@@ -17,8 +17,6 @@
 </head>
 <body>
     @include('layouts.navigation')
-        {{-- @dd($data,$employee) --}}
-        {{-- @dd($employee) --}}
         <main>
                 {{ $slot }}
         </main>

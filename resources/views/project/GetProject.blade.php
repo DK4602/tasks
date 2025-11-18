@@ -1,11 +1,9 @@
 <x-app-layout>
-    {{-- @dd($data->toArray()) --}}
 <div class="max-w-6xl mx-auto my-16 bg-white text-gray-800 rounded-2xl shadow-xl p-10 border border-gray-200 font-sans">
     <a href = "{{Route('projects.index')}}">
                 <x-heroicon-o-arrow-left class="w-5 h-5" />Back to Projects
             </a>
     {{-- Header --}}
-    {{-- @dd($data->employees) --}}
     <div class="text-center border-b border-gray-300 pb-6 mb-8">
         <h1 class="text-3xl font-extrabold tracking-wide text-gray-900">Project Overview</h1>
         <p class="text-gray-500 mt-2">Detailed information about the project and its related tasks</p>
@@ -142,9 +140,7 @@
                         <form action="{{ route('tasks.update', ['task' => $task->id]) }}" method="POST"
                             class="p-6 space-y-5">
                             @csrf
-                            @method('PATCH')
-                            {{-- @dd($task->project_id) --}}
-                            
+                            @method('PATCH') 
                             <input type="hidden" name="project_id" value="{{ $task->project_id }}">
                             <div>
                                 <label class="block text-gray-700 mb-1 font-medium">Task Name</label>

@@ -1,5 +1,4 @@
 <x-app-layout>
-    {{-- @dd($data) --}}
     <div class="flex justify-end mt-5 mx-8">
         <button command="show-modal" commandfor="dialog" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-full text-xl">
             Add Client
@@ -8,8 +7,6 @@
 
 
     <div class="py-8 px-8 flex justify-center">
-        {{-- @dd($data) --}}
-        {{-- @dd($employee) --}}
         <div class="overflow-hidden rounded-xl border border-black shadow-md min-w-full">
             <table class=" min-w-full text-sm text-gray-700">
         <thead class="bg-gray-100 border-b border-gray-300">

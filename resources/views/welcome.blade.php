@@ -34,7 +34,6 @@
             </a>
         </div>    
     @endcan        
-    {{-- @dd($data) --}}
     <div class="overflow-hidden rounded-xl m-5 border border-gray-300 shadow-lg bg-white">   
         <table class="min-w-full text-sm text-gray-700">
             <thead class="bg-gray-100 border-b border-gray-300">
