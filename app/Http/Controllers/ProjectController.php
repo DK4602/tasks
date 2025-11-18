@@ -49,29 +49,28 @@ class ProjectController extends Controller
 
 
     public function store(StoreProjectRequest $request)
-{
-    DB::beginTransaction();
-    try {
-        $validated = $request->validated();
-        $data = [
-            'project_name'        => $validated['project_name'],
-            'project_description' => $validated['project_description'] ?? null,
-            'start_date'          => $validated['start_date'],
-            'end_date'            => $validated['end_date'],
-            'client_id'           => $validated['client_id'],
-        ];
+    {
+        DB::beginTransaction();
+        try {
+            $validated = $request->validated();
+            $data = [
+                'project_name'        => $validated['project_name'],
+                'project_description' => $validated['project_description'] ?? null,
+                'start_date'          => $validated['start_date'],
+                'end_date'            => $validated['end_date'],
+                'client_id'           => $validated['client_id'],
+            ];
 
-        $employeeIds = $validated['employee_ids'];
-        $this->projectRepositories->store($data, $employeeIds);
+            $employeeIds = $validated['employee_ids'];
+            $this->projectRepositories->store($data, $employeeIds);
 
-        DB::commit();
-        return redirect()->route('projects.index')->with('success', 'Project created successfully!');
-        } 
-        catch (\Exception $e) {
+            DB::commit();
+            return redirect()->route('projects.index')->with('success', 'Project created successfully!');
+        } catch (\Exception $e) {
             DB::rollBack();
 
             // Optional: log for debugging
-            Log::error('Project store failed: '.$e->getMessage());
+            Log::error('Project store failed: ' . $e->getMessage());
 
             return redirect()
                 ->route('projects.index')
@@ -81,9 +80,9 @@ class ProjectController extends Controller
 
     public function create()
     {
-        $client = $this->clientRepositories->index([],['role'=>'client']);
-        $employees = $this->employeeRepositories->index([],['role'=>'employee']);
-        return view('project.createProject',compact('client','employees'));
+        $client = $this->clientRepositories->index([], ['role' => 'client']);
+        $employees = $this->employeeRepositories->index([], ['role' => 'employee']);
+        return view('project.createProject', compact('client', 'employees'));
     }
 
     public function show(Project $project)
@@ -91,40 +90,39 @@ class ProjectController extends Controller
         if (Gate::denies('view-project', $project)) {
             return view('error.403page');
         } else {
-            $data = $this->projectRepositories->show($project->id,['employees']);
-            $employeeName = $this->taskRepositories->index(['user'],['project_id'=>$project->id]);
-            return view('project.GetProject', compact('data','employeeName'));
+            $data = $this->projectRepositories->show($project->id, ['employees']);
+            $employeeName = $this->taskRepositories->index(['user'], ['project_id' => $project->id]);
+            return view('project.GetProject', compact('data', 'employeeName'));
         }
     }
 
 
     public function edit($id)
     {
-        $project = $this->projectRepositories->show($id,['employees']);
-        $client = $this->clientRepositories->index([],['role'=>'client']);
-        $employees = $this->employeeRepositories->index([],['role'=>'employee']);
+        $project = $this->projectRepositories->show($id, ['employees']);
+        $client = $this->clientRepositories->index([], ['role' => 'client']);
+        $employees = $this->employeeRepositories->index([], ['role' => 'employee']);
         $selectedEmployees = $project->employees->pluck('id')->toArray();
-        return view('project.editProject',compact('project','client','employees','selectedEmployees'));
+        return view('project.editProject', compact('project', 'client', 'employees', 'selectedEmployees'));
     }
 
 
     public function update(UpdateProjectRequest $request, Project $project)
     {
         DB::beginTransaction();
-        try{
+        try {
             $validated = $request->validated();
             $data = [
-            'project_name'        => $validated['project_name'],
-            'project_description' => $validated['project_description'] ?? null,
-            'start_date'          => $validated['start_date'],
-            'end_date'            => $validated['end_date'],
-            'client_id'           => $validated['client_id'],
+                'project_name'        => $validated['project_name'],
+                'project_description' => $validated['project_description'] ?? null,
+                'start_date'          => $validated['start_date'],
+                'end_date'            => $validated['end_date'],
+                'client_id'           => $validated['client_id'],
             ];
             $this->projectRepositories->update($data, $project->id, $validated['employee_ids']);
             DB::commit();
-            return redirect()->route('projects.edit',$project->id)->with('success', 'Project updated successfully!');;
-        }
-        catch(\Exception $e){
+            return redirect()->route('projects.edit', $project->id)->with('success', 'Project updated successfully!');;
+        } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('projects.index');
         }
@@ -134,14 +132,13 @@ class ProjectController extends Controller
     public function destroy(Project $project)
     {
         DB::beginTransaction();
-        try{
+        try {
             $this->projectRepositories->destroy($project->id);
             DB::commit();
-            return redirect()->route('projects.index')->with('success', 'Project deleted successfully!');;    
-        }
-        catch(\Exception $e){
+            return redirect()->route('projects.index')->with('success', 'Project deleted successfully!');;
+        } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('projects.index');
-        }      
+        }
     }
 }

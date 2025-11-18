@@ -36,6 +36,18 @@ class EmployeeController extends Controller
         }
     }
 
-   
+   public function destroy(string $id)
+    {
+        DB::beginTransaction();
+        try{
+            $this->employeeRepositories->destroy($id);
+            DB::commit();
+            return redirect()->route('employees.index')->with('success', 'Employee deleted successfully!');
+        }
+        catch(\Exception $e){
+            DB::rollBack();
+            return redirect()->route('employees.index');
+        }
+    }
     
 }

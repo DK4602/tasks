@@ -31,9 +31,9 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role'=>'required',
+            'role' => 'required',
         ]);
 
         $user = User::create([
@@ -46,15 +46,13 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         // Auth::login($user);
-        if($request->role == 'employeer')
-        {
-            return redirect(route('employees.index', absolute: false));
-        }
 
-        if($request->role == 'client')
-        {
+
+
+        if ($request->role == 'client') {
             return redirect(route('clients.index', absolute: false));
         }
-        
+
+        return redirect(route('employees.index', absolute: false));
     }
 }
